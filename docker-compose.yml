@@ -1,0 +1,125 @@
+version: "3.9"
+services:
+  auth-service:
+    build: ghcr.io/alvin.rrizky/auth-service:latest
+    ports:
+      - "3001:3000"
+    depends_on:
+      - redis
+    restart: unless-stopped
+
+  common-service:
+    build: ghcr.io/alvin.rrizky/common-service:latest
+    ports:
+      - "3002:3000"
+    restart: unless-stopped
+
+  cache-service:
+    build: ghcr.io/alvin.rrizky/cache-service:latest
+    ports:
+      - "3003:3000"
+    restart: unless-stopped
+
+  generate-service:
+    build: ghcr.io/alvin.rrizky/generate-service:latest
+    ports:
+      - "3004:3000"
+    restart: unless-stopped
+
+  note-management-service:
+    build: ghcr.io/alvin.rrizky/note-management-service:latest
+    ports:
+      - "3005:3000"
+    environment:
+      MONGODB_URI: mongodb://${MONGODB_USER}:${MONGODB_PASSWORD}@mongodb:27017/scripty_db
+    depends_on:
+      - mongodb
+      - redis
+    restart: unless-stopped
+
+  note-service:
+    build: ghcr.io/alvin.rrizky/note-service:latest
+    ports:
+      - "3006:3000"
+    depends_on:
+      - redis
+    restart: unless-stopped
+
+  notification-management-service:
+    build: ghcr.io/alvin.rrizky/notification-management-service:latest
+    ports:
+      - "3007:3000"
+    environment:
+      MONGODB_URI: mongodb://${MONGODB_USER}:${MONGODB_PASSWORD}@mongodb:27017/scripty_db
+    depends_on:
+      - mongodb
+      - redis
+    restart: unless-stopped
+
+  notification-service:
+    build: ghcr.io/alvin.rrizky/notification-service:latest
+    ports:
+      - "3008:3000"
+    depends_on:
+      - redis
+    restart: unless-stopped
+
+  tag-management-service:
+    build: ghcr.io/alvin.rrizky/tag-management-service:latest
+    ports:
+      - "3009:3000"
+    environment:
+      MONGODB_URI: mongodb://${MONGODB_USER}:${MONGODB_PASSWORD}@mongodb:27017/scripty_db
+    depends_on:
+      - mongodb
+      - redis
+    restart: unless-stopped
+
+  tag-service:
+    build: ghcr.io/alvin.rrizky/tag-service:latest
+    ports:
+      - "3010:3000"
+    depends_on:
+      - redis
+    restart: unless-stopped
+
+  user-management-service:
+    build: ghcr.io/alvin.rrizky/user-service:latest
+    ports:
+      - "3011:3000"
+    environment:
+      MONGODB_URI: mongodb://${MONGODB_USER}:${MONGODB_PASSWORD}@mongodb:27017/scripty_db
+    depends_on:
+      - mongodb
+      - redis
+    restart: unless-stopped
+
+  user-service:
+    build: ../user-service
+    ports:
+      - "3012:3000"
+    depends_on:
+      - redis
+    restart: unless-stopped
+
+  redis:
+    image: redis
+    container_name: redis-service
+    ports:
+      - "6380:6379"
+    restart: on-failure
+
+  mongodb:
+    image: mongodb:latest
+    container_name: mongodb-container
+    restart: on-failure
+    ports:
+      - "27018:27017"
+    volumes:
+      - mongo-data:/data/db
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: ${MONGODB_USER}
+      MONGO_INITDB_ROOT_PASSWORD: ${MONGODB_PASSWORD}
+
+volumes:
+  mongo-data:
