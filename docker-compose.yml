@@ -1,117 +1,164 @@
-version: "3.9"
 services:
   auth-service:
-    build: ghcr.io/alvin.rrizky/auth-service:latest
+    image: ghcr.io/${GITHUB_USERNAME}/auth-service:latest
     ports:
       - "3001:3000"
     depends_on:
-      - redis
+      redis:
+        condition: service_healthy
     restart: unless-stopped
+    env_file:
+      - .env
 
   common-service:
-    build: ghcr.io/alvin.rrizky/common-service:latest
+    image: ghcr.io/${GITHUB_USERNAME}/common-service:latest
     ports:
       - "3002:3000"
     restart: unless-stopped
+    env_file:
+      - .env
 
   cache-service:
-    build: ghcr.io/alvin.rrizky/cache-service:latest
+    image: ghcr.io/${GITHUB_USERNAME}/cache-service:latest
     ports:
       - "3003:3000"
+    depends_on:
+      redis:
+        condition: service_healthy
     restart: unless-stopped
+    env_file:
+      - .env
 
   generate-service:
-    build: ghcr.io/alvin.rrizky/generate-service:latest
+    image: ghcr.io/${GITHUB_USERNAME}/generate-service:latest
     ports:
       - "3004:3000"
+    depends_on:
+      redis:
+        condition: service_healthy
     restart: unless-stopped
+    env_file:
+      - .env
 
   note-management-service:
-    build: ghcr.io/alvin.rrizky/note-management-service:latest
+    image: ghcr.io/${GITHUB_USERNAME}/note-management-service:latest
     ports:
       - "3005:3000"
     environment:
       MONGODB_URI: mongodb://${MONGODB_USER}:${MONGODB_PASSWORD}@mongodb:27017/scripty_db
     depends_on:
-      - mongodb
-      - redis
+      mongodb:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
     restart: unless-stopped
+    env_file:
+      - .env
 
   note-service:
-    build: ghcr.io/alvin.rrizky/note-service:latest
+    image: ghcr.io/${GITHUB_USERNAME}/note-service:latest
     ports:
       - "3006:3000"
     depends_on:
-      - redis
+      redis:
+        condition: service_healthy
     restart: unless-stopped
+    env_file:
+      - .env
 
   notification-management-service:
-    build: ghcr.io/alvin.rrizky/notification-management-service:latest
+    image: ghcr.io/${GITHUB_USERNAME}/notification-management-service:latest
     ports:
       - "3007:3000"
     environment:
       MONGODB_URI: mongodb://${MONGODB_USER}:${MONGODB_PASSWORD}@mongodb:27017/scripty_db
     depends_on:
-      - mongodb
-      - redis
+      mongodb:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
     restart: unless-stopped
+    env_file:
+      - .env
 
   notification-service:
-    build: ghcr.io/alvin.rrizky/notification-service:latest
+    image: ghcr.io/${GITHUB_USERNAME}/notification-service:latest
     ports:
       - "3008:3000"
     depends_on:
-      - redis
+      redis:
+        condition: service_healthy
     restart: unless-stopped
+    env_file:
+      - .env
 
   tag-management-service:
-    build: ghcr.io/alvin.rrizky/tag-management-service:latest
+    image: ghcr.io/${GITHUB_USERNAME}/tag-management-service:latest
     ports:
       - "3009:3000"
     environment:
       MONGODB_URI: mongodb://${MONGODB_USER}:${MONGODB_PASSWORD}@mongodb:27017/scripty_db
     depends_on:
-      - mongodb
-      - redis
+      mongodb:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
     restart: unless-stopped
+    env_file:
+      - .env
 
   tag-service:
-    build: ghcr.io/alvin.rrizky/tag-service:latest
+    image: ghcr.io/${GITHUB_USERNAME}/tag-service:latest
     ports:
       - "3010:3000"
     depends_on:
-      - redis
+      redis:
+        condition: service_healthy
     restart: unless-stopped
+    env_file:
+      - .env
 
   user-management-service:
-    build: ghcr.io/alvin.rrizky/user-service:latest
+    image: ghcr.io/${GITHUB_USERNAME}/user-management-service:latest
     ports:
       - "3011:3000"
     environment:
       MONGODB_URI: mongodb://${MONGODB_USER}:${MONGODB_PASSWORD}@mongodb:27017/scripty_db
     depends_on:
-      - mongodb
-      - redis
+      mongodb:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
     restart: unless-stopped
+    env_file:
+      - .env
 
   user-service:
-    build: ../user-service
+    image: ghcr.io/${GITHUB_USERNAME}/user-service:latest
     ports:
       - "3012:3000"
     depends_on:
-      - redis
+      redis:
+        condition: service_healthy
     restart: unless-stopped
+    env_file:
+      - .env
 
   redis:
-    image: redis
-    container_name: redis-service
+    image: redis:latest
+    container_name: redis-container
     ports:
       - "6380:6379"
     restart: on-failure
+    healthcheck:
+      test: ["CMD", "redis-cli", "-h", "localhost", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
 
   mongodb:
-    image: mongodb:latest
-    container_name: mongodb-container
+    image: mongo:latest
+    container_name: mongo-container
     restart: on-failure
     ports:
       - "27018:27017"
@@ -120,6 +167,11 @@ services:
     environment:
       MONGO_INITDB_ROOT_USERNAME: ${MONGODB_USER}
       MONGO_INITDB_ROOT_PASSWORD: ${MONGODB_PASSWORD}
+    healthcheck:
+      test: echo 'db.runCommand("ping").ok' | mongosh mongodb://localhost:27017 --quiet
+      interval: 10s
+      timeout: 5s
+      retries: 5
 
 volumes:
   mongo-data:
