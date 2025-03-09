@@ -8,7 +8,7 @@ services:
         condition: service_healthy
     restart: unless-stopped
     env_file:
-      - .env
+      - .env #Menambahkn NODE_ENV
 
   common-service:
     image: ghcr.io/${GITHUB_USERNAME}/common-service:latest
@@ -16,7 +16,7 @@ services:
       - "3002:3000"
     restart: unless-stopped
     env_file:
-      - .env
+      - .env #Menambahkn NODE_ENV
 
   cache-service:
     image: ghcr.io/${GITHUB_USERNAME}/cache-service:latest
@@ -27,7 +27,7 @@ services:
         condition: service_healthy
     restart: unless-stopped
     env_file:
-      - .env
+      - .env #Menambahkn NODE_ENV
 
   generate-service:
     image: ghcr.io/${GITHUB_USERNAME}/generate-service:latest
@@ -38,7 +38,7 @@ services:
         condition: service_healthy
     restart: unless-stopped
     env_file:
-      - .env
+      - .env #Menambahkn NODE_ENV
 
   note-management-service:
     image: ghcr.io/${GITHUB_USERNAME}/note-management-service:latest
@@ -53,7 +53,7 @@ services:
         condition: service_healthy
     restart: unless-stopped
     env_file:
-      - .env
+      - .env #Menambahkn NODE_ENV
 
   note-service:
     image: ghcr.io/${GITHUB_USERNAME}/note-service:latest
@@ -64,7 +64,7 @@ services:
         condition: service_healthy
     restart: unless-stopped
     env_file:
-      - .env
+      - .env #Menambahkn NODE_ENV
 
   notification-management-service:
     image: ghcr.io/${GITHUB_USERNAME}/notification-management-service:latest
@@ -79,7 +79,7 @@ services:
         condition: service_healthy
     restart: unless-stopped
     env_file:
-      - .env
+      - .env #Menambahkn NODE_ENV
 
   notification-service:
     image: ghcr.io/${GITHUB_USERNAME}/notification-service:latest
@@ -90,7 +90,7 @@ services:
         condition: service_healthy
     restart: unless-stopped
     env_file:
-      - .env
+      - .env #Menambahkn NODE_ENV
 
   tag-management-service:
     image: ghcr.io/${GITHUB_USERNAME}/tag-management-service:latest
@@ -105,7 +105,7 @@ services:
         condition: service_healthy
     restart: unless-stopped
     env_file:
-      - .env
+      - .env #Menambahkn NODE_ENV
 
   tag-service:
     image: ghcr.io/${GITHUB_USERNAME}/tag-service:latest
@@ -116,7 +116,7 @@ services:
         condition: service_healthy
     restart: unless-stopped
     env_file:
-      - .env
+      - .env #Menambahkn NODE_ENV
 
   user-management-service:
     image: ghcr.io/${GITHUB_USERNAME}/user-management-service:latest
@@ -131,7 +131,7 @@ services:
         condition: service_healthy
     restart: unless-stopped
     env_file:
-      - .env
+      - .env #Menambahkn NODE_ENV
 
   user-service:
     image: ghcr.io/${GITHUB_USERNAME}/user-service:latest
@@ -142,7 +142,7 @@ services:
         condition: service_healthy
     restart: unless-stopped
     env_file:
-      - .env
+      - .env #Menambahkn NODE_ENV
 
   redis:
     image: redis:latest
